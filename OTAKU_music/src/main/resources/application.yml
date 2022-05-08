@@ -1,0 +1,51 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: OTAKU-music
+  servlet:
+    multipart:
+      max-request-size: 200MB
+      max-file-size: 400MB
+  thymeleaf:
+    cache: false
+    encoding: UTF-8
+    mode: HTML
+    prefix: classpath:/templates/
+    suffix: .html
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/otaku_music?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
+    username: root
+    password: kkiimm9966
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    #    druid数据库连接池配置
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 20  # 初始化数据连接池大小
+      min-idle: 10     # 空闲数
+      max-active: 100   #最大连接数
+    #redis配置
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      password:    #默认为空
+    # spirng 缓存管理参数配置
+    cache:
+      redis:
+        time-to-live: 500000
+    #定义时间的json序列化格式
+    jackson:
+      date-format: yyyy-MM-dd HH:mm:ss
+
+  #    type: SIMPLE
+
+  #配置Mybatis的相关属性
+  mybatis:
+#    mapper-locations: classpath:mapper/*.xml #指定mapper XML文件的位置
+    type-aliases-package: com.zsc.otaku_music.model  #指定实体类的别名的映射路径
+
+    configuration:
+      log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  #打印输出SQL语句
+      map-underscore-to-camel-case: true   # 启动驼峰式转换
+      use-generated-keys: true      #开启自增组件
+  #debug: true
