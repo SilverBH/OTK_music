@@ -253,9 +253,10 @@
                         return
                     }
                     axios.get('/search?keywords=' + this.query).then(response => {
+                        console.log(response)
                         // 保存内容
-                        this.musicList = response.data.result.songs;
-                        this.isSearch = true;
+                        this.musicList = response.data.result.songs
+                        this.isSearch = true
                     })
 
                     // 清空搜索
@@ -263,18 +264,20 @@
                 },
                 // 播放歌曲
                 playMusic(musicId) {
-                    this.musicId = musicId;
+                    this.musicId = musicId
                     // 获取歌曲url
                     axios.get('/song/url?id=' + musicId).then(response => {
+                        console.log(response)
                         // 保存歌曲url地址
                         this.musicUrl = response.data.data[0].url
+                        // this.musicUrl = response.data.url
                     })
                     // 获取歌名和歌手名
                     axios.get('/song/detail?ids=' + musicId).then(response => {
                         // 保存歌曲名
-                        console.log(response);
-                        this.musicName = response.data.songs[0].name;
-                        this.singerName = response.data.songs[0].ar[0].name;
+                        console.log(response)
+                        this.musicName = response.data.songs[0].name
+                        this.singerName = response.data.songs[0].ar[0].name
                     })
                     // 获取歌曲热门评论
                     axios.get('/comment/hot?type=0&id=' + musicId).then(response => {
@@ -304,7 +307,7 @@
                 // 播放mv
                 playMv(vid) {
                     if (vid) {
-                        this.showVideo = true;
+                        this.showVideo = true
                         // 获取mv信息
                         axios.get('/mv/url?id=' + vid).then(response => {
                             // console.log(response)
@@ -324,7 +327,7 @@
                 historySearch(history) {
                     this.query = history
                     this.searchMusic()
-                    this.showHistory = false;
+                    this.showHistory = false
                 }
             },
 

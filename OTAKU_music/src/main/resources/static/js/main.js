@@ -6,7 +6,8 @@
     响应内容:歌曲搜索结果
 
   2:歌曲url获取接口
-    请求地址:https://autumnfish.cn/song/url
+    请求地址:https://autumnfish.cn/song/url × 现在要验证后才能调用
+            https://music.163.com/song/media/outer/url?id=
     请求方法:get
     请求参数:id(歌曲id)
     响应内容:歌曲url地址
@@ -46,7 +47,13 @@
      说明 : 调用此接口,可获取热门搜索列表
      接口地址 : /search/hot/detail
      调用例子 : /search/hot/detail
+   9.现在登陆后才能调用接口
+     https://autumnfish.cn/login/cellphone?phone=xxx&password=yyy
 */
+// 配置cookie
+// import cookies from 'vue-cookies'
+// Vue.prototype.$cookies = cookies;  //配置时候prototype.$这里的名字自己定义不是固定是cookies
+
 var app = new Vue({
   el: "#player",
   data: {
@@ -100,10 +107,13 @@ var app = new Vue({
       var that = this;
       // 获取歌曲地址
       axios.get("https://autumnfish.cn/song/url?id=" + musicId).then(
+      // axios.get("https://music.163.com/song/media/outer/url?id=" + musicId).then(
+      // axios.get("http://music.cyrilstudio.top/song/url?id=" + musicId).then(
         function(response) {
           // console.log(response);
           // console.log(response.data.data[0].url);
-          that.musicUrl = response.data.data[0].url;
+          // that.musicUrl = response.data.data[0].url;
+          that.musicUrl = response.data.url;
         },
         function(err) {}
       );

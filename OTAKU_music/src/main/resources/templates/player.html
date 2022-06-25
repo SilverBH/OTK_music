@@ -1,24 +1,26 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml"
+      xmlns:v-bind="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IKULA</title>
-    <link rel="icon" href="image/logo.ico" type="image/x-icon">
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/font_header.css">
-    <link rel="stylesheet" href="css/font_leftBox.css">
-    <link rel="stylesheet" href="css/font_footer.css">
+    <link rel="icon" th:href="@{image/logo.ico}" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{css/main.css}">
+    <link rel="stylesheet" th:href="@{css/font_header.css}">
+    <link rel="stylesheet" th:href="@{css/font_leftBox.css}">
+    <link rel="stylesheet" th:href="@{css/font_footer.css}">
 
-    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" th:href="@{css/index.css}">
+
 </head>
 <body>
     <div class="container" id="player">
         <!-- 头部 -->
         <div class="header">
             <div class="logo">
-                <img src="image/logo.png" alt="" @click="changeSearchToFalse()">
+                <img th:src="@{image/logo.png}" alt="" @click="changeSearchToFalse()">
                 <span @click="changeSearchToFalse()">IKULA音乐</span>
             </div>
 
@@ -35,13 +37,23 @@
 
 
             <div class="other">
-               <div class="userInfo">
-                    <img src="image/person.png" alt="a" onclick="javascript:location.href='/userLogin'">
-                    <a th:href="@{/userLogin}">未登录</a>
-               </div>
+                <div sec:authorize="isAnonymous()">
+                    <div class="userInfo">
+                        <img th:src="@{image/person.png}" alt="a" onclick="javascript:location.href='/userLogin'">
+                        <a ref="username" th:href="@{/userLogin}">未登录</a>
+                    </div>
+                </div>
+                <div sec:authorize="isAuthenticated()">
+                    <div class="userInfo">
+                        <img th:src="@{image/ningzi.jpg}" alt="a" onclick="javascript:location.href='/userLogin'">
+                        <a ref="username" class="username" sec:authentication="name" th:href="@{/userLogout}"></a>
+                    </div>
+                </div>
+
+
                 <ul>
                     <li><i class="iconfont icon-zhuti"></i></li>
-                    <li><i class="iconfont icon-shezhi"></i></li>
+                    <li onclick="javascript:location.href='/admin'"><i class="iconfont icon-shezhi"></i></li>
                     <li><i class="iconfont icon-xinfeng"></i></li>
                     <li class="vertical_bar"></li>
                     <li><i class="iconfont icon-MINIMIZE"></i></li>
@@ -75,7 +87,7 @@
                     <li><i class="iconfont icon-zuijinbofang"></i><span>最近播放</span></li>
                     <li><i class="iconfont icon-yun"></i><span>我的音乐云盘</span></li>
                     <li><i class="iconfont icon-boke1"></i><span>我的播客</span></li>
-                    <li><i class="iconfont icon-ego-favorite"></i><span>我的收藏</span></li>
+                    <li @click="javascript:location.href='/user/lovelist'"><i class="iconfont icon-ego-favorite"></i><span>我的收藏</span></li>
                 </ul>
                 <div class="create_list">
                     <span>
@@ -114,7 +126,7 @@
                                 <span>点击收藏</span>
                             </div>
                         </div>
-                        <img src="image/加藤惠.jpg" alt="">
+                        <img th:src="@{image/jth.jpg}" alt="">
                     </div>
 
                     <div class="dot">
@@ -170,13 +182,13 @@
                                 <span><i @click='playMv(item.mvid)' v-if="item.mvid!=0"></i></span>
                             </li>
                         </ul>
-                        <img src="image/line.png" class="switch_btn" alt="">
+                        <img th:src="@{image/line.png}" class="switch_btn" alt="">
                     </div>
                     <!-- 歌曲信息容器 -->
                     <div class="player_con" :class="{playing:isPlay}">
-                        <img src="image/player_bar.png" class="play_bar" />
+                        <img th:src="@{image/player_bar.png}" class="play_bar" />
                         <!-- 黑胶碟片 -->
-                        <img src="image/disc.png" class="disc autoRotate" />
+                        <img th:src="@{image/disc.png}" class="disc autoRotate" />
                         <img :src="coverUrl" class="cover autoRotate" />
                     </div>
                     <!-- 评论容器 -->
@@ -194,7 +206,7 @@
                                 </dd>
                             </dl>
                         </div>
-                        <img src="image/line.png" class="right_line">
+                        <img th:src="@{image/line.png}" class="right_line">
                     </div>
                 </div>
             </div>
@@ -205,7 +217,7 @@
             <div class="ft_left">
                 <img class="_img" v-bind:src="coverUrl" alt="">
                 <div class="songNameAndSinger">
-                    <span class="songName" v-cloak>{{musicName}}<i class="iconfont icon-aixin" v-show="musicUrl!=''"></i></span>
+                    <span class="songName" v-cloak>{{musicName}}<i sec:authorize="isAuthenticated()" class="iconfont icon-aixin" v-if="musicUrl!=''&!isLove" @click="toggleLove()"></i><i sec:authorize="isAuthenticated()" class="iconfont icon-hongaixin" v-if="musicUrl!=''&isLove" @click="toggleLove()"></i></span>
                     <span class="singer" v-cloak>{{singerName}}</span>
                 </div>
             </div>
@@ -240,15 +252,17 @@
         </div>
     </div>
 <!--    <script src="js/listen.js"></script>-->
-    <script src="js/main.js"></script>
+    <script th:src="@{js/main.js}"></script>
     <!-- 开发环境版本，包含了有帮助的命令行警告 -->
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<!--    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>-->
+    <script th:src="@{js/vue.min.js}"></script>
     <!-- 官网提供的 axios 在线地址 -->
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<!--    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>-->
+    <script th:src="@{js/axios.min.js}"></script>
     <script type="text/javascript">
         // 设置axios的基地址
-        axios.defaults.baseURL = 'https://autumnfish.cn';
-        // axios.defaults.baseURL = 'http://localhost:3000';
+        // axios.defaults.baseURL = 'https://autumnfish.cn';
+        axios.defaults.baseURL = 'http://localhost:3000';
         // 实例化vue
         var app = new Vue({
             el: "#player",
@@ -263,12 +277,16 @@
                 singerName: '',
                 // 歌曲列表
                 musicList: [],
+                // 喜爱歌单列表
+                loveList: [],
                 // 歌曲url
                 musicUrl: '',
                 // 是否正在播放
                 isPlay: false,
                 // 是否正在搜索
                 isSearch: false,
+                // 是否喜欢
+                isLove: false,
                 // 歌曲热门评论
                 hotComments: [],
                 // 歌曲封面地址
@@ -276,7 +294,11 @@
                 // 显示视频播放
                 showVideo: false,
                 // mv地址
-                mvUrl: ''
+                mvUrl: '',
+                // 用户名
+                username: '',
+                // cookie
+                cookie: 'cookie=MUSIC_A_T=1478959428513;%20Max-Age=2147483647;%20Expires=Thu,%2006%20Jul%202090%2011:32:18%20GMT;%20Path=/eapi/feedback;;MUSIC_A_T=1478959428513;%20Max-Age=2147483647;%20Expires=Thu,%2006%20Jul%202090%2011:32:18%20GMT;%20Path=/api/feedback;;MUSIC_A_T=1478959428513;%20Max-Age=2147483647;%20Expires=Thu,%2006%20Jul%202090%2011:32:18%20GMT;%20Path=/weapi/clientlog;;MUSIC_R_T=1478959688720;%20Max-Age=2147483647;%20Expires=Thu,%2006%20Jul%202090%2011:32:18%20GMT;%20Path=/eapi/clientlog;;MUSIC_R_T=1478959688720;%20Max-Age=2147483647;%20Expires=Thu,%2006%20Jul%202090%2011:32:18%20GMT;%20Path=/wapi/clientlog;;MUSIC_A_T=1478959428513;%20Max-Age=2147483647;%20Expires=Thu,%2006%20Jul%202090%2011:32:18%20GMT;%20Path=/neapi/feedback;;MUSIC_A_T=1478959428513;%20Max-Age=2147483647;%20Expires=Thu,%2006%20Jul%202090%2011:32:18%20GMT;%20Path=/openapi/clientlog;;MUSIC_U=275ec42bba07494910cc973f9a4e279c61bd6009d3987f0cdf4b6f3ffc2355a0519e07624a9f00537857a50cb8376a37a6fd52ce483660f9baadf090423226889a223504ecb9172aa89fe7c55eac81f3;%20Max-Age=1296000;%20Expires=Sun,%2003%20Jul%202022%2008:18:11%20GMT;%20Path=/;;MUSIC_SNS=;%20Max-Age=0;%20Expires=Sat,%2018%20Jun%202022%2008:18:11%20GMT;%20Path=/;MUSIC_A_T=1478959428513;%20Max-Age=2147483647;%20Expires=Thu,%2006%20Jul%202090%2011:32:18%20GMT;%20Path=/api/clientlog;;MUSIC_A_T=1478959428513;%20Max-Age=2147483647;%20Expires=Thu,%2006%20Jul%202090%2011:32:18%20GMT;%20Path=/wapi/feedback;;MUSIC_R_T=1478959688720;%20Max-Age=2147483647;%20Expires=Thu,%2006%20Jul%202090%2011:32:18%20GMT;%20Path=/eapi/feedback;;MUSIC_R_T=1478959688720;%20Max-Age=2147483647;%20Expires=Thu,%2006%20Jul%202090%2011:32:18%20GMT;%20Path=/api/clientlog;;MUSIC_R_T=1478959688720;%20Max-Age=2147483647;%20Expires=Thu,%2006%20Jul%202090%2011:32:18%20GMT;%20Path=/weapi/clientlog;;MUSIC_R_T=1478959688720;%20Max-Age=2147483647;%20Expires=Thu,%2006%20Jul%202090%2011:32:18%20GMT;%20Path=/wapi/feedback;;__remember_me=true;%20Max-Age=1296000;%20Expires=Sun,%2003%20Jul%202022%2008:18:11%20GMT;%20Path=/;;MUSIC_A_T=1478959428513;%20Max-Age=2147483647;%20Expires=Thu,%2006%20Jul%202090%2011:32:18%20GMT;%20Path=/neapi/clientlog;;MUSIC_A_T=1478959428513;%20Max-Age=2147483647;%20Expires=Thu,%2006%20Jul%202090%2011:32:18%20GMT;%20Path=/eapi/clientlog;;__csrf=346bdbcaccfafeb5514d2b8f31d5e86f;%20Max-Age=1296010;%20Expires=Sun,%2003%20Jul%202022%2008:18:21%20GMT;%20Path=/;;MUSIC_R_T=1478959688720;%20Max-Age=2147483647;%20Expires=Thu,%2006%20Jul%202090%2011:32:18%20GMT;%20Path=/api/feedback;;MUSIC_A_T=1478959428513;%20Max-Age=2147483647;%20Expires=Thu,%2006%20Jul%202090%2011:32:18%20GMT;%20Path=/weapi/feedback;;MUSIC_R_T=1478959688720;%20Max-Age=2147483647;%20Expires=Thu,%2006%20Jul%202090%2011:32:18%20GMT;%20Path=/neapi/feedback;;MUSIC_R_T=1478959688720;%20Max-Age=2147483647;%20Expires=Thu,%2006%20Jul%202090%2011:32:18%20GMT;%20Path=/neapi/clientlog;;MUSIC_A_T=1478959428513;%20Max-Age=2147483647;%20Expires=Thu,%2006%20Jul%202090%2011:32:18%20GMT;%20Path=/wapi/clientlog;;MUSIC_R_T=1478959688720;%20Max-Age=2147483647;%20Expires=Thu,%2006%20Jul%202090%2011:32:18%20GMT;%20Path=/weapi/feedback;;MUSIC_R_T=1478959688720;%20Max-Age=2147483647;%20Expires=Thu,%2006%20Jul%202090%2011:32:18%20GMT;%20Path=/openapi/clientlog;'
             },
             // 方法
             methods: {
@@ -295,8 +317,73 @@
                 //         }
                 //     );
                 // },
+                // 检查播放的歌曲是否为喜爱的歌曲
+                checkIsLove() {
+                    if (this.isLove == true && this.loveList.indexOf(this.musicId) == -1) {
+                        axios.get('http://localhost:8888/user/lovelist/add/' + this.username + '/' + this.musicId).then(response => {
+                            // console.log(response.data.length)
+                            // console.log(response.data[0].musicId)
+                            // this.loveList.add(response.data[0].musicId)
+                            this.loveList = response.data
+                            console.log(this.loveList)
+                        })
+                    } else if (this.isLove == false && this.loveList.indexOf(this.musicId) != -1) {
+                        axios.get('http://localhost:8888/user/lovelist/delete/' + this.username + '/' + this.musicId).then(response => {
+                            // console.log(response.data.length)
+                            // console.log(response.data[0].musicId)
+                            // this.loveList.add(response.data[0].musicId)
+                            this.loveList = response.data
+                            console.log(this.loveList)
+                        })
+                    }
+                },
+                // 获取用户名
+                getUsername() {
+                    // this.$nextTick(()=>{
+                    //     //元素加载完成后执行的代码
+                    //
+                    // });
+                    if (this.$refs.username.innerText != "未登录" && this.$refs.username.innerText != null) {
+                        this.username = this.$refs.username.innerText
+
+                        this.getLoveList();
+                    }
+                    // this.username = this.$refs.username.innerText
+
+                    // console.log(this.$refs.username.innerText)
+                },
+                // 获取喜爱的歌单
+                getLoveList() {
+                    if (this.username != "未登录") {
+                        // console.log(this.username)
+                        axios.get('http://localhost:8888/user/lovelist/' + this.username).then(response => {
+                            // console.log(response.data.length)
+                            // console.log(response.data[0].musicId)
+                            // this.loveList.add(response.data[0].musicId)
+                            this.loveList = response.data
+                            // console.log(this.loveList)
+                        })
+                    }
+                },
+                // 切换是否喜欢音乐的状态
+                toggleLove() {
+                    if (this.isLove) {
+                        this.isLove = false;
+                    } else {
+                        this.isLove = true;
+                    }
+                },
+                // 登录认证网易云
+                loginAuthen() {
+                    axios.get('/login/cellphone?phone=xxx&password=yyy').then(response => {
+                        // console.log(response)
+                    })
+                    // //永不过期
+                    // this.$cookies.set("default_unit_second","input_value",-1);
+                },
                 // 搜索歌曲
                 searchMusic() {
+                    // this.loginAuthen()
                     if (this.query == 0) {
                         return
                     }
@@ -309,35 +396,63 @@
                     // 清空搜索
                     this.query = ''
                 },
-                // 播放歌曲
-                playMusic(musicId) {
-                    this.musicId = musicId;
-                    // 获取歌曲url
-                    axios.get('/song/url?id=' + musicId).then(response => {
+                //获取歌曲url
+                getMusicUrl(musicId) {
+                    axios.get('/song/url?id=' + musicId + '&' + this.cookie).then(response => {
+                        // axios.get('/song/url?id=' + musicId + '&MUSIC_U=275ec42bba07494910cc973f9a4e279c61bd6009d3987f0c8567d95633c29f2a519e07624a9f00535f043fdae1ca2cbe42be88f69b7678c2baadf090423226889a223504ecb9172aa89fe7c55eac81f3').then(response => {
+                        //     console.log(response.data.data[0].url)
                         // 保存歌曲url地址
                         this.musicUrl = response.data.data[0].url
                     })
-                    // 获取歌名和歌手名
-                    axios.get('/song/detail?ids=' + musicId).then(response => {
+                },
+                // 获取歌名和歌手名
+                getMusicDetail(musicId) {
+                    // axios.get('/song/detail?ids=' + musicId).then(response => {
+                    axios.get('/song/detail?ids=' + musicId + '&' + this.cookie).then(response => {
+                        // axios.get('/song/detail?ids=' + musicId + '&MUSIC_U=275ec42bba07494910cc973f9a4e279c61bd6009d3987f0c8567d95633c29f2a519e07624a9f00535f043fdae1ca2cbe42be88f69b7678c2baadf090423226889a223504ecb9172aa89fe7c55eac81f3').then(response => {
                         // 保存歌曲名
-                        console.log(response);
+                        // console.log(response);
                         this.musicName = response.data.songs[0].name;
                         this.singerName = response.data.songs[0].ar[0].name;
+                        // 设置封面
+                        this.coverUrl = response.data.songs[0].al.picUrl
                     })
-                    // 获取歌曲热门评论
+                },
+                // 获取歌曲热门评论
+                getHotComment(musicId) {
                     axios.get('/comment/hot?type=0&id=' + musicId).then(response => {
+                        // axios.get('/comment/hot?type=0&id=' + musicId + '&MUSIC_U=275ec42bba07494910cc973f9a4e279c61bd6009d3987f0c8567d95633c29f2a519e07624a9f00535f043fdae1ca2cbe42be88f69b7678c2baadf090423226889a223504ecb9172aa89fe7c55eac81f3').then(response => {
                         // console.log(response)
                         // 保存热门评论
                         this.hotComments = response.data.hotComments
 
                     })
-                    // 获取歌曲封面
-                    axios.get('/song/detail?ids=' + musicId).then(response => {
-                        // console.log(response)
-                        // 设置封面
-                        this.coverUrl = response.data.songs[0].al.picUrl
-                    })
-
+                },
+                // 播放歌曲
+                playMusic(musicId) {
+                    this.getLoveList();
+                    // this.loginAuthen()
+                    this.musicId = musicId;
+                    if (this.loveList == []) {
+                        this.isLove = false;
+                    } else {
+                        this.isLove = false;
+                        // for (var i=0; i<this.loveList.length-1; i++) {
+                        //     // console.log(this.loveList[i])
+                        //     if (this.musicId == this.loveList[i]) {
+                        //         this.isLove = true;
+                        //     }
+                        // }
+                        if (this.loveList.indexOf(this.musicId) != -1) {
+                            this.isLove = true;
+                        }
+                    }
+                    // 获取歌曲url
+                    this.getMusicUrl(musicId);
+                    // 获取歌名和歌手名
+                    this.getMusicDetail(musicId)
+                    // 获取歌曲热门评论
+                    this.getHotComment(musicId)
                 },
                 // audio的play事件
                 play() {
@@ -359,10 +474,12 @@
                 },
                 // 播放mv
                 playMv(vid) {
+                    // this.loginAuthen()
                     if (vid) {
                         this.showVideo = true;
                         // 获取mv信息
-                        axios.get('/mv/url?id=' + vid).then(response => {
+                        axios.get('/mv/url?id=' + vid + "&" + this.cookie).then(response => {
+                        // axios.get('/mv/url?id=' + vid + '&MUSIC_U=275ec42bba07494910cc973f9a4e279c61bd6009d3987f0c8567d95633c29f2a519e07624a9f00535f043fdae1ca2cbe42be88f69b7678c2baadf090423226889a223504ecb9172aa89fe7c55eac81f3').then(response => {
                             // console.log(response)
                             // 暂停歌曲播放
                             this.$refs.audio.pause()
@@ -385,9 +502,19 @@
                 // 关闭搜索页回到首页
                 changeSearchToFalse() {
                     this.isSearch = false;
+                    this.musicList = [];
                 }
             },
-
+            watch: {
+                isLove: {
+                    handler: 'checkIsLove',
+                    immediate: true,
+                    deep: true
+                }
+            },
+            mounted() {
+                this.getUsername();
+            }
         })
 
     </script>

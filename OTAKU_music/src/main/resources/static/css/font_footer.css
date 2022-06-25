@@ -49,6 +49,11 @@
   content: "\eca1";
 }
 
+.icon-hongaixin:before {
+  color: red;
+  content: "\eca1";
+}
+
 .icon-24gl-playlistMusic:before {
   content: "\ea71";
 }

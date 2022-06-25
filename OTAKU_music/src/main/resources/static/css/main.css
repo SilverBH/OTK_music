@@ -110,24 +110,24 @@ body {
     margin-left: 80px;
 }
 
-.other .userInfo {
+.other div .userInfo {
     display: flex;
     align-items: center;
 }
 
-.other .userInfo img {
+.other div .userInfo img {
     margin-right: 10px;
     height: 30px;
     width: 30px;
     border-radius: 50%;
 }
 
-.other .userInfo span {
+.other div .userInfo span {
     color: #adadad;
     font-size: 13px;
 }
 
-.other .userInfo a {
+.other div .userInfo a {
     color: #adadad;
     font-size: 13px;
 }

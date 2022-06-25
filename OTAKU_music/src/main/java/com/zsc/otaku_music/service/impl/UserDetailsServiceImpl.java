@@ -1,4 +1,4 @@
-package com.zsc.otaku_music.service;
+package com.zsc.otaku_music.service.impl;
 
 import com.zsc.otaku_music.model.Authority;
 import com.zsc.otaku_music.model.User;
@@ -21,12 +21,12 @@ import java.util.stream.Collectors;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userService.getUser(username);
-        List<Authority> authorityList = userService.getUserAuthority(username);
+        User user = userServiceImpl.getUser(username);
+        List<Authority> authorityList = userServiceImpl.getUserAuthority(username);
         // 对用户权限进行封装
         List<SimpleGrantedAuthority> list =
                 authorityList.stream()

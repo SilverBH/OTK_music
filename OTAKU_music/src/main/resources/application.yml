@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8888
 spring:
   application:
     name: OTAKU-music
@@ -36,16 +36,32 @@ spring:
     #定义时间的json序列化格式
     jackson:
       date-format: yyyy-MM-dd HH:mm:ss
-
   #    type: SIMPLE
+  #邮箱服务器
+  mail:
+    username: f95w531@163.com   #登录邮箱的账号
+    #这里填的是你刚才客户端授权的密码，而不是你登录邮箱的密码
+    password: GFGARJXRXVBFMPZP
+    default-encoding: UTF-8
+    host: smtp.163.com
+    port: 25
+  cache:
+    redis:
+      time-to-live: 9000
 
-  #配置Mybatis的相关属性
-  mybatis:
-#    mapper-locations: classpath:mapper/*.xml #指定mapper XML文件的位置
-    type-aliases-package: com.zsc.otaku_music.model  #指定实体类的别名的映射路径
+#配置Mybatis的相关属性
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml #指定mapper XML文件的位置
+  type-aliases-package: com.zsc.otaku_music.model  #指定实体类的别名的映射路径
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  #打印输出SQL语句
+    map-underscore-to-camel-case: true   # 启动驼峰式转换
+    use-generated-keys: true      #开启自增组件
+#debug: true
 
-    configuration:
-      log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  #打印输出SQL语句
-      map-underscore-to-camel-case: true   # 启动驼峰式转换
-      use-generated-keys: true      #开启自增组件
-  #debug: true
+pagehelper:
+  helper-dialect: mysql  #指定DBMS
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+  page-size-zero: true

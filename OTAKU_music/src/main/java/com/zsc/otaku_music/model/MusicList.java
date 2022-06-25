@@ -1,5 +1,6 @@
 package com.zsc.otaku_music.model;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -15,7 +16,7 @@ import java.util.Date;
 @AllArgsConstructor
 @TableName("music_list_info")
 public class MusicList implements Serializable {
-    @TableId
+    @TableId(type = IdType.AUTO)
     private Long musicListId;
     @TableField("music_list_name")
     private String musicListName;

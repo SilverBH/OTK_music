@@ -3,6 +3,7 @@ package com.zsc.otaku_music.dao;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.zsc.otaku_music.dto.UserFindDto;
 import com.zsc.otaku_music.model.User;
 import org.apache.ibatis.annotations.*;
 
@@ -48,4 +49,15 @@ public interface UserMapper extends BaseMapper<User> {
     // 根据 entity 条件，查询全部记录
     List<User> selectList(@Param(Constants.WRAPPER) Wrapper<User> queryWrapper);
 
+//    //第四种，参数方法调用
+//    //存在以下 Mapper 接口方法，你不需要在 xml 处理后两个参数
+//    List<UserFindDto> selectByPageNumSize(
+//            @Param("userFindDto") UserFindDto userFindDto,
+//            @Param("pageNum") int pageNum,
+//            @Param("pageSize") int pageSize);
+
+    /**
+     * 根据条件查询用户列表
+     */
+    public List<User> pageQuery(UserFindDto userFindDto);
 }
